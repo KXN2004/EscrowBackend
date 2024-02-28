@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from models.database import database
 from models.users import Users
 from config import SECRET
@@ -37,7 +39,7 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
         print("Password does not match")
         raise InvalidCredentialsException
     else:
-        access_token = manager.create_access_token(data={"sub": email})
+        access_token = manager.create_access_token(data={"sub": email}, expires=timedelta(hours=3))
         return JSONResponse(
             content={"access_token": access_token, "token_type": "bearer"}
         )
