@@ -1,11 +1,6 @@
-from config import DB_URL
+from models.database import Base , database
 
-from sqlalchemy.orm import declarative_base, Session
-from sqlalchemy import create_engine, Column, Integer, String
-
-Base = declarative_base()
-engine = create_engine(DB_URL)
-database = Session(bind=engine)
+from sqlalchemy import Column, Integer, String
 
 
 class Users(Base):
@@ -16,6 +11,3 @@ class Users(Base):
     password = Column(String)
     phone = Column(String)
     storyline = Column(Integer)
-
-
-Base.metadata.create_all(engine, checkfirst=True)
