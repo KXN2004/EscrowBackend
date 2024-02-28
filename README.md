@@ -35,7 +35,7 @@ This project demonstrates how to create a simple backend using FastAPI, a modern
 3. Install the required dependencies:
 
     ```bash
-    pip install -r requirements.txt
+    pip install -r Requirement.txt
     ```
 
 ## Usage
