@@ -1,4 +1,5 @@
-from models.users import Users, database
+from models.database import database
+from models.users import Users
 from config import SECRET
 
 from fastapi import APIRouter, Depends
@@ -42,7 +43,7 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
         )
 
 
-@router.post("/data")
+@router.post("/verify")
 async def data(user=Depends(manager)):
     return JSONResponse(
         status_code=200,
