@@ -11,17 +11,3 @@ class Users(Base):
     password = Column(String)
     phone = Column(String)
     storyline = Column(Integer)
-
-
-vishal = Users()
-
-vishal.name = "Vishal"
-vishal.email = "vism06@gmail.com"
-phone = "8999972216"
-vishal.password = phone
-vishal.phone = phone
-vishal.storyline = 1
-
-database.add(vishal)
-database.commit()
-
