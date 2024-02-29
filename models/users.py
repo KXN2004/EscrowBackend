@@ -1,7 +1,7 @@
 from models.database import Base, database
 
+from datetime import datetime
 from sqlalchemy import Column, Integer, String,Time
-
 
 
 class Users(Base):
@@ -16,7 +16,14 @@ class Users(Base):
     end = Column(Time)
     progress = Column(Integer)
 
+    def __init__(self, email):
+        self.user = database.query(Users).filter_by(email=email).one()
+
     def get_start(self):
-        return database.query(Users).filter_by(email=self.email).first().start
+        return self.user.start
 
-
+    def set_start(self):
+        start = datetime.now().time()
+        self.user.start = start.strftime("%H:%M:%S")
+        database.commit()
+        return start

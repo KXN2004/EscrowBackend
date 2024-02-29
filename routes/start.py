@@ -1,11 +1,22 @@
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
 from models.users import Users
+from routes.login import manager
 
-router = APIRouter(prefix="/start")
+from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
+
+router = APIRouter(prefix="/time")
 
 
-@router.get("/")
-async def start():
-    starting = Users().get_start(),
-    return JSONResponse(status_code=200, content=starting)
+@router.get("/start")
+async def start(user=Depends(manager)):
+    starting = Users(email=user.email).set_start()
+    return JSONResponse(
+        status_code=200,
+        content={
+            "start_time": {
+                "hours": starting.hour,
+                "minutes": starting.minute,
+                "seconds": starting.second
+            }
+        }
+    )
