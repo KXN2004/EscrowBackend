@@ -1,6 +1,7 @@
-from models.database import Base
+from models.database import Base, database
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String,Time
+
 
 
 class Users(Base):
@@ -11,3 +12,11 @@ class Users(Base):
     password = Column(String)
     phone = Column(String)
     storyline = Column(Integer)
+    start = Column(Time)
+    end = Column(Time)
+    progress = Column(Integer)
+
+    def get_start(self):
+        return database.query(Users).filter_by(email=self.email).first().start
+
+
