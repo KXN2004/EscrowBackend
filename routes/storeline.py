@@ -47,11 +47,10 @@ async def question_progress(user=Depends(manager)):
 class Answer(BaseModel):
     answer: str
 
-
 @router.post("/{progress}")
 async def answer_progress(progress: int, answer_data: Answer, user=Depends(manager)):
+    print(answer_data)
     storyline = database.query(Users).filter_by(email=user.email).one().storyline
-    answer_data = set(answer_data.split(","))
     stories = {
         "digital" : Digital,
         "harrypotter" : HarryPotter,
@@ -59,12 +58,19 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
         "zodiac" : Zodiac,
     }
     correct = database.query(stories[storyline]).filter_by(qnum=progress).one().answer
+    answer = answer_data.answer.lower()
+    correct = correct.lower()
+    answer_data = set(answer.split(","))
     correct = set(correct.split(","))
-    print(answer_data)
-    if answer_data.answer.lower() == correct.lower():
+
+    if answer_data == correct:
         database.query(Users).filter_by(email=user.email).update({"progress": progress+1})
-        nextQuestion = database.query(stories[storyline]).filter_by(qnum=progress+1).one().question
-        database.commit()
+        if progress <=7:
+            nextQuestion = database.query(stories[storyline]).filter_by(qnum=progress+1).one().question
+            database.commit()
+        else:
+            nextQuestion = None
+            database.commit()
         return JSONResponse(
             status_code=200,
             content={
