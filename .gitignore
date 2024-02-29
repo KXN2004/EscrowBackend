@@ -173,3 +173,4 @@ cython_debug/
 
 # Project specific files/directories
 test_main.http
+app.yaml

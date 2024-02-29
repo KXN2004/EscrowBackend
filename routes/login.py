@@ -4,12 +4,13 @@ from models.database import database
 from models.users import Users
 from config import SECRET
 
+from pydantic import BaseModel
+from sqlalchemy.exc import NoResultFound
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from fastapi_login import LoginManager
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_login import LoginManager
 from fastapi_login.exceptions import InvalidCredentialsException
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/user")
 manager = LoginManager(SECRET, "/user/login")
@@ -23,7 +24,10 @@ class UserLoginRequest(BaseModel):
 
 @manager.user_loader()
 def query_user(email_id):
-    return database.query(Users).filter_by(email=email_id).one()
+    try:
+        return database.query(Users).filter_by(email=email_id).one()
+    except NoResultFound:
+        raise NoResultFound("User not found")
 
 
 @router.post("/login")
@@ -31,11 +35,13 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
     email = data.username
     password = data.password
 
-    user = query_user(email)
-    if not user:
+    try:
+        user = query_user(email)
+    except NoResultFound:
         print("User not found")
         raise InvalidCredentialsException
-    elif password != user.password:
+
+    if password != user.password:
         print("Password does not match")
         raise InvalidCredentialsException
     else:
