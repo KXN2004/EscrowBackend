@@ -5,7 +5,6 @@ from routes.start import router as start_route
 
 app = FastAPI()
 
-
 origins = ["*"]
 
 app.add_middleware(
@@ -15,6 +14,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/")
 async def root():

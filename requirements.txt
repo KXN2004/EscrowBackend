@@ -1,5 +1,7 @@
 python-dotenv
 fastapi
+uvicorn
+gunicorn
 fastapi-login
 sqlalchemy
 psycopg2-binary
