@@ -47,7 +47,7 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
 
         if progress <= 7:
             next_question = database.query(story).filter_by(qnum=progress + 1).one().question
-        if progress == 9:
+        elif progress == 9:
             Users(email=user.email).set_end()
         else:
             next_question = None
