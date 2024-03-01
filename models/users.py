@@ -14,7 +14,7 @@ class Users(Base):
     storyline = Column(Integer)
     start = Column(Time)
     end = Column(Time)
-    progress = Column(Integer)
+    progress = Column(Integer, default=1)
     hintcount = Column(Integer)
     totaltime = Column(Time)
 
