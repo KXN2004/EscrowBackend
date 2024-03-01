@@ -3,7 +3,7 @@ from models.database import database
 from models.users import Users
 from routes.login import manager
 from datetime import datetime, date, time
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/time")
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/time")
 async def start(user=Depends(manager)):
     starting = Users(email=user.email).set_start()
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "start_time": {
                 "hours": starting.hour,
@@ -45,7 +45,7 @@ async def sendtime(user=Depends(manager)):
     database.query(Users).filter_by(email=user.email).update({"totaltime": total_time_second})
     database.commit()
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "total_time": total_time_second
         }
