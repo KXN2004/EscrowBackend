@@ -90,17 +90,3 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
             }
         )
 
-
-@router.get("/start")
-async def start(user=Depends(manager)):
-    starting = Users(email=user.email).set_start()
-    return JSONResponse(
-        status_code=200,
-        content={
-            "start_time": {
-                "hours": starting.hour,
-                "minutes": starting.minute,
-                "seconds": starting.second
-            }
-        }
-    )

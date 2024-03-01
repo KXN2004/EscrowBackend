@@ -27,6 +27,9 @@ class Users(Base):
     def get_end(self):
         return self.user.end
 
+    def get_hintcount(self):
+        return self.user.hintcount
+
     def set_start(self):
         start = datetime.now().time()
         self.user.start = start.strftime("%H:%M:%S")
