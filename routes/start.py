@@ -28,7 +28,7 @@ async def sendtime(user=Depends(manager)):
     starting_time = Users(email=user.email).get_start()
     ending_time = Users(email=user.email).get_end()
     hintused = Users(email=user.email).get_hintcount()
-    penalty = hintused * 20
+    penalty = hintused * 30
     today = date.today()
     starting = datetime.combine(today, starting_time)
     ending = datetime.combine(today, ending_time)
