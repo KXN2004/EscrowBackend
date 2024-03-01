@@ -60,7 +60,7 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
     correct = database.query(stories[storyline]).filter_by(qnum=progress).one().answer
     answer = answer_data.answer.lower()
     correct = correct.lower()
-    answer_data = set(answer.split(","))
+    answer_data = set(''.join(answer.split(",")))
     correct = set(correct.split(","))
 
     if answer_data == correct:
