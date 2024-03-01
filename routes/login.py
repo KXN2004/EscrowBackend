@@ -46,21 +46,28 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
         raise InvalidCredentialsException
     else:
         access_token = manager.create_access_token(data={"sub": email}, expires=timedelta(hours=3))
-        """
         starting = Users(email=user.email).get_start()
+
         if not starting:  # When starting is None
             return JSONResponse(
                 status_code=200,
                 content={
                     "access_token": access_token,
                     "token_type": "bearer",
-                    "start_time": None
-            """
-        return JSONResponse(
-            status_code=200,
-            content={
+                    "start_time": None,
+                }
+            )
+        else:
+            return JSONResponse(
+                status_code=200,
+                content={
                 "access_token": access_token,
                 "token_type": "bearer",
+                "start_time": {
+                    "hours": starting.hour,
+                    "minutes": starting.minute,
+                    "seconds": starting.second
+                }
             }
         )
 
