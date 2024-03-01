@@ -1,5 +1,5 @@
 import datetime
-
+from models.database import database
 from models.users import Users
 from routes.login import manager
 from datetime import datetime, date, time
@@ -42,6 +42,8 @@ async def sendtime(user=Depends(manager)):
 
     # Format the total time as HH:MM:SS
     total_time_second = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    database.query(Users).filter_by(email=user.email).update({"totaltime": total_time_second})
+    database.commit()
     return JSONResponse(
         status_code=200,
         content={

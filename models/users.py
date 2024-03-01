@@ -16,6 +16,7 @@ class Users(Base):
     end = Column(Time)
     progress = Column(Integer)
     hintcount = Column(Integer)
+    totaltime = Column(Time)
 
     def __init__(self, email):
         self.user = database.query(Users).filter_by(email=email).one()
