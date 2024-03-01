@@ -1,4 +1,4 @@
-from models.database import Base, database
+from models.database import Base, database ,engine
 
 from datetime import datetime
 from sqlalchemy import Column, Integer, String,Time
@@ -15,6 +15,7 @@ class Users(Base):
     start = Column(Time)
     end = Column(Time)
     progress = Column(Integer)
+    hintcount = Column(Integer)
 
     def __init__(self, email):
         self.user = database.query(Users).filter_by(email=email).one()
@@ -27,3 +28,5 @@ class Users(Base):
         self.user.start = start.strftime("%H:%M:%S")
         database.commit()
         return start
+
+
