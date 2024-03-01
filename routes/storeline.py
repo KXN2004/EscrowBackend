@@ -2,40 +2,30 @@ from pydantic import BaseModel
 
 from models.users import Users
 from routes.login import manager
-from models.database import database
 from models.games import *
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-
 router = APIRouter(prefix="/question")
 
+stories = {
+    "Digital": Digital,
+    "Harry Potter": HarryPotter,
+    "Pirates": Pirates,
+    "Zodiac": Zodiac,
+}
 
 
-"""
-@router.get("/")
-async def question(user=Depends(manager)):
-    progress = database.query(Users).filter_by(email=user.email).one().progress
-    return JSONResponse(
-        status_code=200,
-        content={
-            "QuestionNumber": progress
-        }
-    )
-"""
+class Answer(BaseModel):
+    answer: str
 
 
 @router.get("/")
 async def question_progress(user=Depends(manager)):
     storyline = database.query(Users).filter_by(email=user.email).one().storyline
-    stories = {
-        "digital" : Digital,
-        "harrypotter" : HarryPotter,
-        "pirates" : Pirates,
-        "zodiac" : Zodiac,
-    }
+    story = stories[storyline]
     progress = database.query(Users).filter_by(email=user.email).one().progress
-    question = database.query(stories[storyline]).filter_by(qnum=progress).one().question
+    question = database.query(story).filter_by(qnum=progress).one().question
     return JSONResponse(
         status_code=200,
         content={
@@ -44,42 +34,31 @@ async def question_progress(user=Depends(manager)):
     )
 
 
-class Answer(BaseModel):
-    answer: str
-
 @router.post("/{progress}")
 async def answer_progress(progress: int, answer_data: Answer, user=Depends(manager)):
     print(answer_data)
     storyline = database.query(Users).filter_by(email=user.email).one().storyline
-    stories = {
-        "digital" : Digital,
-        "harrypotter" : HarryPotter,
-        "pirates" : Pirates,
-        "zodiac" : Zodiac,
-    }
-    correct = database.query(stories[storyline]).filter_by(qnum=progress).one().answer
-    answer = answer_data.answer.lower()
-    correct = correct.lower()
-    answer_data = set(''.join(answer.split(",")))
-    correct = set(correct.split(","))
+    story = stories[storyline]
+    correct = set(database.query(story).filter_by(qnum=progress).one().answer.lower().split(","))
+    answer = set("".join(answer_data.answer.lower().split()).split(","))
 
-    if answer_data == correct:
-        database.query(Users).filter_by(email=user.email).update({"progress": progress+1})
-        if progress <=7:
-            nextQuestion = database.query(stories[storyline]).filter_by(qnum=progress+1).one().question
-            database.commit()
+    if answer == correct:
+        database.query(Users).filter_by(email=user.email).update({"progress": progress + 1})
+
+        if progress <= 7:
+            next_question = database.query(story).filter_by(qnum=progress + 1).one().question
+        if progress == 9:
+            Users(email=user.email).set_end()
         else:
-            nextQuestion = None
-            database.commit()
+            next_question = None
 
-        if progress == 8:
-            ending = Users(email=user.email).set_end()
+        database.commit()
 
         return JSONResponse(
             status_code=200,
             content={
                 "Correct": True,
-                "NextQuestion": nextQuestion
+                "NextQuestion": next_question
             }
         )
     else:
@@ -89,4 +68,3 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
                 "Correct": False
             }
         )
-

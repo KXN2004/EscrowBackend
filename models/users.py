@@ -1,6 +1,6 @@
 from models.database import Base, database ,engine
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import Column, Integer, String,Time
 
 
@@ -24,7 +24,6 @@ class Users(Base):
     def get_start(self):
         return self.user.start
 
-
     def get_end(self):
         return self.user.end
 
@@ -32,13 +31,13 @@ class Users(Base):
         return self.user.hintcount
 
     def set_start(self):
-        start = datetime.now().time()
+        start = datetime.utcnow() + timedelta(hours=5, minutes=30)
         self.user.start = start.strftime("%H:%M:%S")
         database.commit()
         return start
 
     def set_end(self):
-        end = datetime.now().time()
+        end = datetime.utcnow() + timedelta(hours=5, minutes=30)
         self.user.end = end.strftime("%H:%M:%S")
         database.commit()
         return end
