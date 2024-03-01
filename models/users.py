@@ -23,10 +23,18 @@ class Users(Base):
     def get_start(self):
         return self.user.start
 
+
+    def get_end(self):
+        return self.user.end
+
     def set_start(self):
         start = datetime.now().time()
         self.user.start = start.strftime("%H:%M:%S")
         database.commit()
         return start
 
-
+    def set_end(self):
+        end = datetime.now().time()
+        self.user.end = end.strftime("%H:%M:%S")
+        database.commit()
+        return end

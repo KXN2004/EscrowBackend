@@ -71,6 +71,10 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
         else:
             nextQuestion = None
             database.commit()
+
+        if progress == 8:
+            ending = Users(email=user.email).set_end()
+
         return JSONResponse(
             status_code=200,
             content={
@@ -85,3 +89,18 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
                 "Correct": False
             }
         )
+
+
+@router.get("/start")
+async def start(user=Depends(manager)):
+    starting = Users(email=user.email).set_start()
+    return JSONResponse(
+        status_code=200,
+        content={
+            "start_time": {
+                "hours": starting.hour,
+                "minutes": starting.minute,
+                "seconds": starting.second
+            }
+        }
+    )
