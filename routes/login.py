@@ -32,7 +32,7 @@ def query_user(email_id):
 
 @router.post("/login")
 async def login(data: OAuth2PasswordRequestForm = Depends()):
-    email = data.username
+    email = data.username.lower()
     password = data.password
 
     try:
