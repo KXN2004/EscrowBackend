@@ -29,7 +29,7 @@ This project demonstrates how to create a simple backend using FastAPI, a modern
 2. Navigate to the project directory:
 
     ```bash
-    cd fastapi-backend
+    cd EscrowBackend
     ```
 
 3. Install the required dependencies:
