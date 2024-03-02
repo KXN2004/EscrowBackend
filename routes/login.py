@@ -6,7 +6,7 @@ from config import SECRET
 
 from pydantic import BaseModel
 from sqlalchemy.exc import NoResultFound
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login import LoginManager
@@ -42,39 +42,41 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
         raise InvalidCredentialsException
 
     if password != user.password:
-        print("Password does not match")
+        print(f"User: {user.name} - Incorrect password")
         raise InvalidCredentialsException
     else:
         access_token = manager.create_access_token(data={"sub": email}, expires=timedelta(hours=3))
         starting = Users(email=user.email).get_start()
 
-        if not starting:  # When starting is None
+        print(f"User: {user.name} - Logged in at {starting}")
+
+        if not starting:
             return JSONResponse(
-                status_code=200,
+                status_code=status.HTTP_200_OK,
                 content={
                     "access_token": access_token,
                     "token_type": "bearer",
-                    "start_time": None,
+                    "start_time": None
                 }
             )
         else:
             return JSONResponse(
-                status_code=200,
+                status_code=status.HTTP_200_OK,
                 content={
-                "access_token": access_token,
-                "token_type": "bearer",
-                "start_time": {
-                    "hours": starting.hour,
-                    "minutes": starting.minute,
-                    "seconds": starting.second
+                    "access_token": access_token,
+                    "token_type": "bearer",
+                    "start_time": {
+                        "hours": starting.hour,
+                        "minutes": starting.minute,
+                        "seconds": starting.second
+                    }
                 }
-            }
-        )
+            )
 
 
 @router.post("/verify")
 async def data(user=Depends(manager)):
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content="You are logged in as " + user.email
     )

@@ -12,6 +12,7 @@ router = APIRouter(prefix="/time")
 @router.get("/start")
 async def start(user=Depends(manager)):
     starting = Users(email=user.email).set_start()
+    print(f"User: {user.name} - Started at {starting.strftime('%H:%M:%S')}")
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
@@ -23,6 +24,7 @@ async def start(user=Depends(manager)):
         }
     )
 
+
 @router.get("/sendtime")
 async def sendtime(user=Depends(manager)):
     starting_time = Users(email=user.email).get_start()
@@ -32,16 +34,14 @@ async def sendtime(user=Depends(manager)):
     today = date.today()
     starting = datetime.combine(today, starting_time)
     ending = datetime.combine(today, ending_time)
-
     total_seconds = (ending - starting).total_seconds()
-    print(total_seconds)
     total_time_second = total_seconds + penalty
     hours = int(total_time_second // 3600)
     minutes = int((total_time_second % 3600) // 60)
     seconds = int(total_time_second % 60)
-
     # Format the total time as HH:MM:SS
     total_time_second = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    print(f"User: {user.email} - Total time taken {total_time_second}")
     database.query(Users).filter_by(email=user.email).update({"totaltime": total_time_second})
     database.commit()
     return JSONResponse(
@@ -50,4 +50,3 @@ async def sendtime(user=Depends(manager)):
             "total_time": total_time_second
         }
     )
-
