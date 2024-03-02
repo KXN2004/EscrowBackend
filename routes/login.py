@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from models.database import database
 from models.users import Users
@@ -47,9 +47,8 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
     else:
         access_token = manager.create_access_token(data={"sub": email}, expires=timedelta(hours=3))
         starting = Users(email=user.email).get_start()
-
-        print(f"User: {user.name} - Logged in at {starting}")
-
+        now = datetime.utcnow() + timedelta(hours=5, minutes=30)
+        print(f"User: {user.name} - Logged in at {now.strftime('%H:%M:%S')}")
         if not starting:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,

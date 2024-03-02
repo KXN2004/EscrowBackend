@@ -11,18 +11,32 @@ router = APIRouter(prefix="/time")
 
 @router.get("/start")
 async def start(user=Depends(manager)):
-    starting = Users(email=user.email).set_start()
-    print(f"User: {user.name} - Started at {starting.strftime('%H:%M:%S')}")
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={
-            "start_time": {
-                "hours": starting.hour,
-                "minutes": starting.minute,
-                "seconds": starting.second
+    existing_start = database.query(Users).filter_by(email=user.email).first().start
+    if existing_start:
+        print(f"User: {user.name} - Started at {existing_start.strftime('%H:%M:%S')}")
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "start_time": {
+                    "hours": existing_start.hour,
+                    "minutes": existing_start.minute,
+                    "seconds": existing_start.second
+                }
             }
-        }
-    )
+        )
+    else:
+        starting = Users(email=user.email).set_start()
+        print(f"User: {user.name} - Started at {starting.strftime('%H:%M:%S')}")
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "start_time": {
+                    "hours": starting.hour,
+                    "minutes": starting.minute,
+                    "seconds": starting.second
+                }
+            }
+        )
 
 
 @router.get("/sendtime")

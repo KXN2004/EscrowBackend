@@ -27,7 +27,8 @@ async def question_progress(user=Depends(manager)):
     progress = database.query(Users).filter_by(email=user.email).one().progress
     question = database.query(story).filter_by(qnum=progress).one().question
     print(f"User: {user.name}")
-    print(f"Story: {story}")
+    print(f"Story: {storyline}")
+    print(f"Quesion Number: {progress}")
     print(f"Current Question: {question}")
     return JSONResponse(
         status_code=status.HTTP_200_OK,
@@ -45,13 +46,15 @@ async def answer_progress(progress: int, answer_data: Answer, user=Depends(manag
     correct = set(database.query(story).filter_by(qnum=progress).one().answer.lower().split(","))
     answer = set("".join(answer_data.answer.lower().split()).split(","))
     print(f"User: {user.name}")
-    print(f"Story: {story}")
+    print(f"Story: {storyline}")
+    print(f"Quesion Number: {progress}")
+
     print(f"Expected Answer: {answer}")
     print(f"Correct Answer: {correct}")
     if answer == correct:
         database.query(Users).filter_by(email=user.email).update({"progress": progress + 1})
         print("Answer: Correct")
-        print(f"Current Question: {progress}")
+        print(f"Current Question Number: {progress}")
         if progress <= 7:
             next_question = database.query(story).filter_by(qnum=progress + 1).one().question
             print(f"Next Question: {next_question}")
